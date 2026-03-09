@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import useIsMobile from "./useIsMobile.js";
 
 // ─── DOCUMENT TEMPLATES ────────────────────────────────────────────────────
 const DOC_TEMPLATES = [
@@ -766,7 +767,8 @@ function FlowDiagram() {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
-  const [scale, setScale] = useState(0.85);
+  const isMobile = useIsMobile();
+  const [scale, setScale] = useState(isMobile ? 0.45 : 0.85);
 
   const W = 900;
   const H = 1480;
@@ -976,9 +978,25 @@ function FlowDiagram() {
           background: "rgba(0,0,0,0.3)",
           cursor: dragging ? "grabbing" : hoveredNode ? "pointer" : "grab",
           position: "relative",
-          height: "520px",
+          height: isMobile ? "380px" : "520px",
+          touchAction: "none",
         }}
         onWheel={handleWheel}
+        onTouchStart={(e) => {
+          if (e.touches.length === 1) {
+            setDragging(true);
+            dragStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          }
+        }}
+        onTouchMove={(e) => {
+          if (dragging && e.touches.length === 1) {
+            const dx = e.touches[0].clientX - dragStart.current.x;
+            const dy = e.touches[0].clientY - dragStart.current.y;
+            setOffset((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+            dragStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          }
+        }}
+        onTouchEnd={() => setDragging(false)}
       >
         <div
           style={{
@@ -1047,7 +1065,7 @@ function FlowDiagram() {
           </button>
           <button
             onClick={() => {
-              setScale(0.85);
+              setScale(isMobile ? 0.45 : 0.85);
               setOffset({ x: 0, y: 0 });
             }}
             style={{
@@ -1107,6 +1125,7 @@ export default function LegalHub() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activePivotScenario, setActivePivotScenario] = useState(null);
   const [activePivotOption, setActivePivotOption] = useState(null);
+  const isMobile = useIsMobile();
 
   const subTabs = [
     { id: "docs", label: "Document Vault", icon: "📄" },
@@ -1152,7 +1171,7 @@ export default function LegalHub() {
             }}
             style={{
               flex: 1,
-              padding: "10px 8px",
+              padding: isMobile ? "9px 4px" : "10px 8px",
               background:
                 subTab === t.id ? "rgba(233,69,96,0.08)" : "transparent",
               border: "none",
@@ -1163,7 +1182,7 @@ export default function LegalHub() {
               color: subTab === t.id ? "#E94560" : "#444",
               cursor: "pointer",
               transition: "all 0.2s",
-              fontSize: "10px",
+              fontSize: isMobile ? "8px" : "10px",
               fontWeight: 700,
               letterSpacing: "0.5px",
               textTransform: "uppercase",
@@ -1171,7 +1190,7 @@ export default function LegalHub() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: "5px",
+              gap: isMobile ? "3px" : "5px",
             }}
           >
             <span style={{ fontSize: "13px" }}>{t.icon}</span>
@@ -1182,7 +1201,7 @@ export default function LegalHub() {
 
       {/* ═══ DOCUMENT VAULT ═══ */}
       {subTab === "docs" && (
-        <div style={{ padding: "20px 24px" }}>
+        <div style={{ padding: isMobile ? "14px 12px" : "20px 24px" }}>
           <p
             style={{
               color: "#666",
@@ -1239,7 +1258,7 @@ export default function LegalHub() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(240px, 1fr))",
                 gap: "8px",
               }}
             >
@@ -1552,7 +1571,7 @@ export default function LegalHub() {
 
       {/* ═══ DECISION TREE ═══ */}
       {subTab === "tree" && (
-        <div style={{ padding: "20px 24px" }}>
+        <div style={{ padding: isMobile ? "14px 12px" : "20px 24px" }}>
           <p
             style={{
               color: "#666",
@@ -1573,7 +1592,7 @@ export default function LegalHub() {
 
       {/* ═══ PIVOT ENGINE ═══ */}
       {subTab === "pivots" && (
-        <div style={{ padding: "20px 24px" }}>
+        <div style={{ padding: isMobile ? "14px 12px" : "20px 24px" }}>
           <p
             style={{
               color: "#666",
@@ -1750,8 +1769,8 @@ export default function LegalHub() {
                             )
                           }
                           style={{
-                            flex: "1 1 160px",
-                            padding: "10px 14px",
+                            flex: isMobile ? "1 1 100%" : "1 1 160px",
+                            padding: isMobile ? "8px 12px" : "10px 14px",
                             background:
                               activePivotOption === i
                                 ? `${s.color}15`

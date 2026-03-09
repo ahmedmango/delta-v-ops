@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LegalHub from "./LegalHub.jsx";
+import useIsMobile from "./useIsMobile.js";
 
 const WORKSTREAMS = [
   {
@@ -592,6 +593,7 @@ export default function DeltaVWorkstreams() {
   const [activeScenario, setActiveScenario] = useState(null);
   const [activeLegalSection, setActiveLegalSection] = useState(null);
   const [activeLegalItem, setActiveLegalItem] = useState(null);
+  const isMobile = useIsMobile();
 
   const selected = WORKSTREAMS.find((w) => w.id === activeStream);
   const selectedPhase = selected && activePhase !== null ? selected.phases[activePhase] : null;
@@ -608,13 +610,13 @@ export default function DeltaVWorkstreams() {
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
       {/* Header */}
-      <div style={{ padding: "24px 28px 14px", borderBottom: "1px solid rgba(233,69,96,0.2)" }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "3px" }}>
-          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "24px", fontWeight: 700, color: "#E94560" }}>ΔV</span>
-          <span style={{ fontSize: "18px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#fff" }}>Operations Map</span>
+      <div style={{ padding: isMobile ? "16px 16px 12px" : "24px 28px 14px", borderBottom: "1px solid rgba(233,69,96,0.2)" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: isMobile ? "8px" : "10px", marginBottom: "3px" }}>
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: isMobile ? "20px" : "24px", fontWeight: 700, color: "#E94560" }}>ΔV</span>
+          <span style={{ fontSize: isMobile ? "14px" : "18px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#fff" }}>Operations Map</span>
         </div>
-        <p style={{ color: "#555", fontSize: "11px", fontFamily: "'Space Mono', monospace", margin: 0 }}>
-          6 workstreams · 4 scenarios · full legal structure · pivot engine · 2026
+        <p style={{ color: "#555", fontSize: isMobile ? "9px" : "11px", fontFamily: "'Space Mono', monospace", margin: 0 }}>
+          {isMobile ? "6 workstreams · 4 scenarios · legal · pivots · 2026" : "6 workstreams · 4 scenarios · full legal structure · pivot engine · 2026"}
         </p>
       </div>
 
@@ -623,13 +625,13 @@ export default function DeltaVWorkstreams() {
         {tabs.map((t) => (
           <button key={t.id} onClick={() => { setActiveTab(t.id); setActiveStream(null); setActivePhase(null); setActiveScenario(null); setActiveLegalSection(null); setActiveLegalItem(null); }}
             style={{
-              flex: 1, padding: "12px 12px", background: activeTab === t.id ? "rgba(233,69,96,0.1)" : "transparent",
+              flex: 1, padding: isMobile ? "10px 4px" : "12px 12px", background: activeTab === t.id ? "rgba(233,69,96,0.1)" : "transparent",
               border: "none", borderBottom: activeTab === t.id ? "2px solid #E94560" : "2px solid transparent",
               color: activeTab === t.id ? "#E94560" : "#555", cursor: "pointer", transition: "all 0.2s",
-              fontSize: "11px", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase",
-              fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+              fontSize: isMobile ? "8px" : "11px", fontWeight: 700, letterSpacing: isMobile ? "0.5px" : "1px", textTransform: "uppercase",
+              fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? "3px" : "6px",
             }}>
-            <span style={{ fontSize: "14px" }}>{t.icon}</span>{t.label}
+            <span style={{ fontSize: isMobile ? "13px" : "14px" }}>{t.icon}</span>{isMobile ? t.label.split(" ")[0] : t.label}
           </button>
         ))}
       </div>
@@ -637,29 +639,29 @@ export default function DeltaVWorkstreams() {
       {/* WORKSTREAMS */}
       {activeTab === "workstreams" && (
         <div>
-          <div style={{ display: "flex", gap: 0, borderBottom: "1px solid rgba(255,255,255,0.06)", overflowX: "auto" }}>
+          <div style={{ display: "flex", gap: 0, borderBottom: "1px solid rgba(255,255,255,0.06)", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
             {WORKSTREAMS.map((w) => (
               <button key={w.id} onClick={() => { setActiveStream(activeStream === w.id ? null : w.id); setActivePhase(null); }}
                 style={{
-                  flex: "1 1 0", minWidth: "90px", padding: "12px 6px",
+                  flex: isMobile ? "0 0 auto" : "1 1 0", minWidth: isMobile ? "64px" : "90px", padding: isMobile ? "10px 8px" : "12px 6px",
                   background: activeStream === w.id ? `${w.color}18` : "transparent",
                   border: "none", borderBottom: activeStream === w.id ? `2px solid ${w.color}` : "2px solid transparent",
                   color: activeStream === w.id ? w.color : "#555", cursor: "pointer", transition: "all 0.2s",
                   display: "flex", flexDirection: "column", alignItems: "center", gap: "2px",
                 }}>
-                <span style={{ fontSize: "16px" }}>{w.icon}</span>
-                <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", fontFamily: "'Space Mono', monospace" }}>{w.label}</span>
+                <span style={{ fontSize: isMobile ? "14px" : "16px" }}>{w.icon}</span>
+                <span style={{ fontSize: isMobile ? "7px" : "9px", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", fontFamily: "'Space Mono', monospace" }}>{isMobile ? w.label.split(" ")[0] : w.label}</span>
               </button>
             ))}
           </div>
 
           {!selected ? (
-            <div style={{ padding: "24px 28px" }}>
-              <p style={{ color: "#777", fontSize: "12px", marginBottom: "24px", lineHeight: 1.6, maxWidth: "560px" }}>
+            <div style={{ padding: isMobile ? "16px 12px" : "24px 28px" }}>
+              <p style={{ color: "#777", fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "16px" : "24px", lineHeight: 1.6, maxWidth: "560px" }}>
                 Six parallel workstreams. Tap any one to see phase-by-phase breakdown with tasks and deliverables.
               </p>
-              <div style={{ overflowX: "auto" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "140px repeat(10, 1fr)", gap: 0, marginBottom: "2px" }}>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                <div style={{ display: "grid", gridTemplateColumns: `${isMobile ? "100px" : "140px"} repeat(10, ${isMobile ? "44px" : "1fr"})`, gap: 0, marginBottom: "2px", minWidth: isMobile ? "540px" : "auto" }}>
                   <div />
                   {QUARTERS.map((q) => (
                     <div key={q.label} style={{ textAlign: "center", fontSize: "9px", fontFamily: "'Space Mono', monospace", color: "#444", letterSpacing: "1px", padding: "5px 0" }}>{q.label}</div>
@@ -667,7 +669,7 @@ export default function DeltaVWorkstreams() {
                 </div>
                 {WORKSTREAMS.map((w) => (
                   <div key={w.id} onClick={() => { setActiveStream(w.id); setActivePhase(null); }}
-                    style={{ display: "grid", gridTemplateColumns: "140px repeat(10, 1fr)", gap: 0, marginBottom: "2px", cursor: "pointer", borderRadius: "3px" }}
+                    style={{ display: "grid", gridTemplateColumns: `${isMobile ? "100px" : "140px"} repeat(10, ${isMobile ? "44px" : "1fr"})`, gap: 0, marginBottom: "2px", cursor: "pointer", borderRadius: "3px", minWidth: isMobile ? "540px" : "auto" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 4px" }}>
@@ -697,9 +699,9 @@ export default function DeltaVWorkstreams() {
               </div>
             </div>
           ) : (
-            <div style={{ padding: "22px 28px" }}>
+            <div style={{ padding: isMobile ? "16px 12px" : "22px 28px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
-                <span style={{ fontSize: "22px" }}>{selected.icon}</span>
+                <span style={{ fontSize: isMobile ? "18px" : "22px" }}>{selected.icon}</span>
                 <div>
                   <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: selected.color }}>{selected.label}</h2>
                   <p style={{ margin: 0, fontSize: "11px", color: "#555", fontFamily: "'Space Mono', monospace" }}>{selected.tagline}</p>
@@ -709,10 +711,10 @@ export default function DeltaVWorkstreams() {
                 {selected.phases.map((phase, i) => (
                   <button key={i} onClick={() => setActivePhase(activePhase === i ? null : i)}
                     style={{
-                      padding: "7px 12px", background: activePhase === i ? selected.color : "rgba(255,255,255,0.04)",
+                      padding: isMobile ? "6px 10px" : "7px 12px", background: activePhase === i ? selected.color : "rgba(255,255,255,0.04)",
                       border: `1px solid ${activePhase === i ? selected.color : "rgba(255,255,255,0.08)"}`, borderRadius: "7px",
                       color: activePhase === i ? "#fff" : "#777", cursor: "pointer", transition: "all 0.2s",
-                      display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1px", flex: "1 1 110px", minWidth: "110px",
+                      display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1px", flex: isMobile ? "1 1 calc(50% - 4px)" : "1 1 110px", minWidth: isMobile ? "0" : "110px",
                     }}>
                     <span style={{ fontSize: "11px", fontWeight: 700 }}>{phase.name}</span>
                     <span style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", opacity: 0.7 }}>{phase.timeline}</span>
@@ -748,15 +750,15 @@ export default function DeltaVWorkstreams() {
 
       {/* SCENARIOS */}
       {activeTab === "scenarios" && (
-        <div style={{ padding: "24px 28px" }}>
-          <p style={{ color: "#777", fontSize: "12px", marginBottom: "20px", lineHeight: 1.6, maxWidth: "580px" }}>
+        <div style={{ padding: isMobile ? "16px 12px" : "24px 28px" }}>
+          <p style={{ color: "#777", fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "14px" : "20px", lineHeight: 1.6, maxWidth: "580px" }}>
             Four scenarios for 2026. Each maps conditions, LP outcome, key risk, and estimated probability. Plan for base case. Prepare for slow start.
           </p>
-          <div style={{ display: "flex", gap: "6px", marginBottom: "20px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "6px", marginBottom: isMobile ? "14px" : "20px", flexWrap: "wrap" }}>
             {SCENARIOS.map((s) => (
               <button key={s.id} onClick={() => setActiveScenario(activeScenario === s.id ? null : s.id)}
                 style={{
-                  flex: "1 1 130px", minWidth: "130px", padding: "10px 14px",
+                  flex: isMobile ? "1 1 calc(50% - 4px)" : "1 1 130px", minWidth: isMobile ? "0" : "130px", padding: isMobile ? "8px 10px" : "10px 14px",
                   background: activeScenario === s.id ? `${s.color}20` : "rgba(255,255,255,0.03)",
                   border: `1px solid ${activeScenario === s.id ? s.color : "rgba(255,255,255,0.08)"}`,
                   borderRadius: "9px", cursor: "pointer", transition: "all 0.2s",
@@ -793,8 +795,8 @@ export default function DeltaVWorkstreams() {
                       ))}
                     </div>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                    <div style={{ padding: "12px 14px", background: `${s.color}08`, borderRadius: "7px", borderLeft: `3px solid ${s.color}` }}>
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
+                    <div style={{ padding: isMobile ? "10px 12px" : "12px 14px", background: `${s.color}08`, borderRadius: "7px", borderLeft: `3px solid ${s.color}` }}>
                       <div style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: s.color, fontWeight: 700, letterSpacing: "1px", marginBottom: "6px" }}>LP OUTCOME</div>
                       <p style={{ margin: 0, fontSize: "11px", color: "#aaa", lineHeight: 1.6 }}>{s.lp_outcome}</p>
                     </div>
@@ -814,15 +816,15 @@ export default function DeltaVWorkstreams() {
 
       {/* LEGAL */}
       {activeTab === "legal" && (
-        <div style={{ padding: "24px 28px" }}>
-          <p style={{ color: "#777", fontSize: "12px", marginBottom: "20px", lineHeight: 1.6, maxWidth: "600px" }}>
+        <div style={{ padding: isMobile ? "16px 12px" : "24px 28px" }}>
+          <p style={{ color: "#777", fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "14px" : "20px", lineHeight: 1.6, maxWidth: "600px" }}>
             Fund vehicle options under CBB regulations, LP commitments, required documents, and tax structure. Informed by Bahrain's regulatory framework — not legal advice.
           </p>
-          <div style={{ display: "flex", gap: "5px", marginBottom: "20px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "5px", marginBottom: isMobile ? "14px" : "20px", flexWrap: "wrap" }}>
             {LEGAL_SECTIONS.map((sec) => (
               <button key={sec.id} onClick={() => { setActiveLegalSection(activeLegalSection === sec.id ? null : sec.id); setActiveLegalItem(null); }}
                 style={{
-                  flex: "1 1 140px", minWidth: "140px", padding: "10px 14px",
+                  flex: isMobile ? "1 1 calc(50% - 4px)" : "1 1 140px", minWidth: isMobile ? "0" : "140px", padding: isMobile ? "8px 10px" : "10px 14px",
                   background: activeLegalSection === sec.id ? "rgba(233,69,96,0.12)" : "rgba(255,255,255,0.03)",
                   border: `1px solid ${activeLegalSection === sec.id ? "#E94560" : "rgba(255,255,255,0.08)"}`,
                   borderRadius: "9px", cursor: "pointer", transition: "all 0.2s",
@@ -843,10 +845,10 @@ export default function DeltaVWorkstreams() {
                   return (
                     <div key={idx} style={{ marginBottom: "6px", background: "rgba(255,255,255,0.02)", border: `1px solid ${isOpen ? "rgba(233,69,96,0.3)" : "rgba(255,255,255,0.06)"}`, borderRadius: "9px", overflow: "hidden", transition: "border 0.2s" }}>
                       <button onClick={() => setActiveLegalItem(isOpen ? null : idx)}
-                        style={{ width: "100%", padding: "14px 18px", background: "transparent", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "left" }}>
+                        style={{ width: "100%", padding: isMobile ? "12px 14px" : "14px 18px", background: "transparent", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "left" }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <h4 style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: isOpen ? "#E94560" : "#ddd" }}>{item.heading}</h4>
-                          <p style={{ margin: "3px 0 0", fontSize: "10px", color: "#555", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.desc}</p>
+                          <h4 style={{ margin: 0, fontSize: isMobile ? "12px" : "13px", fontWeight: 700, color: isOpen ? "#E94560" : "#ddd" }}>{item.heading}</h4>
+                          <p style={{ margin: "3px 0 0", fontSize: "10px", color: "#555", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: isMobile ? "normal" : "nowrap" }}>{item.desc}</p>
                         </div>
                         <span style={{ fontSize: "16px", color: isOpen ? "#E94560" : "#333", transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft: "12px", flexShrink: 0 }}>▾</span>
                       </button>
