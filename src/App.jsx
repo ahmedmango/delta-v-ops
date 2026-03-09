@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LegalHub from "./LegalHub.jsx";
 
 const WORKSTREAMS = [
   {
@@ -599,6 +600,7 @@ export default function DeltaVWorkstreams() {
     { id: "workstreams", label: "Workstreams", icon: "⚙️" },
     { id: "scenarios", label: "Scenarios", icon: "🎯" },
     { id: "legal", label: "Legal & LP Terms", icon: "📋" },
+    { id: "legalhub", label: "Docs & Pivots", icon: "🧭" },
   ];
 
   return (
@@ -612,7 +614,7 @@ export default function DeltaVWorkstreams() {
           <span style={{ fontSize: "18px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#fff" }}>Operations Map</span>
         </div>
         <p style={{ color: "#555", fontSize: "11px", fontFamily: "'Space Mono', monospace", margin: 0 }}>
-          6 workstreams · 4 scenarios · full legal structure · 2026
+          6 workstreams · 4 scenarios · full legal structure · pivot engine · 2026
         </p>
       </div>
 
@@ -875,6 +877,9 @@ export default function DeltaVWorkstreams() {
           </div>
         </div>
       )}
+
+      {/* LEGAL HUB — DOCS, TREE, PIVOTS */}
+      {activeTab === "legalhub" && <LegalHub />}
     </div>
   );
 }
