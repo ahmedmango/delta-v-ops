@@ -1,6 +1,7 @@
 import { useState } from "react";
 import LegalHub from "./LegalHub.jsx";
 import useIsMobile from "./useIsMobile.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 const WORKSTREAMS = [
   {
@@ -594,6 +595,7 @@ export default function DeltaVWorkstreams() {
   const [activeLegalSection, setActiveLegalSection] = useState(null);
   const [activeLegalItem, setActiveLegalItem] = useState(null);
   const isMobile = useIsMobile();
+  const { theme, mode, toggle } = useTheme();
 
   const selected = WORKSTREAMS.find((w) => w.id === activeStream);
   const selectedPhase = selected && activePhase !== null ? selected.phases[activePhase] : null;
@@ -606,28 +608,29 @@ export default function DeltaVWorkstreams() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0a12", color: "#e8e8e8", fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: theme.bg, color: theme.text, fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif", transition: "background 0.3s, color 0.3s" }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
       {/* Header */}
       <div style={{ padding: isMobile ? "16px 16px 12px" : "24px 28px 14px", borderBottom: "1px solid rgba(233,69,96,0.2)" }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: isMobile ? "8px" : "10px", marginBottom: "3px" }}>
           <span style={{ fontFamily: "'Space Mono', monospace", fontSize: isMobile ? "20px" : "24px", fontWeight: 700, color: "#E94560" }}>ΔV</span>
-          <span style={{ fontSize: isMobile ? "14px" : "18px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#fff" }}>Operations Map</span>
+          <span style={{ fontSize: isMobile ? "14px" : "18px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: theme.textStrong }}>Operations Map</span>
+          <button onClick={toggle} style={{ marginLeft: "auto", background: "none", border: `1px solid ${theme.border}`, borderRadius: "6px", padding: "4px 8px", cursor: "pointer", fontSize: "14px", lineHeight: 1, color: theme.textFainter, transition: "all 0.2s" }} title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{mode === "dark" ? "\u2600\uFE0F" : "\uD83C\uDF19"}</button>
         </div>
-        <p style={{ color: "#555", fontSize: isMobile ? "9px" : "11px", fontFamily: "'Space Mono', monospace", margin: 0 }}>
+        <p style={{ color: theme.textFainter, fontSize: isMobile ? "9px" : "11px", fontFamily: "'Space Mono', monospace", margin: 0 }}>
           {isMobile ? "6 workstreams · 4 scenarios · legal · pivots · 2026" : "6 workstreams · 4 scenarios · full legal structure · pivot engine · 2026"}
         </p>
       </div>
 
       {/* Main tabs */}
-      <div style={{ display: "flex", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}>
+      <div style={{ display: "flex", borderBottom: `1px solid ${theme.borderStrong}`, background: theme.cardBg }}>
         {tabs.map((t) => (
           <button key={t.id} onClick={() => { setActiveTab(t.id); setActiveStream(null); setActivePhase(null); setActiveScenario(null); setActiveLegalSection(null); setActiveLegalItem(null); }}
             style={{
               flex: 1, padding: isMobile ? "10px 4px" : "12px 12px", background: activeTab === t.id ? "rgba(233,69,96,0.1)" : "transparent",
               border: "none", borderBottom: activeTab === t.id ? "2px solid #E94560" : "2px solid transparent",
-              color: activeTab === t.id ? "#E94560" : "#555", cursor: "pointer", transition: "all 0.2s",
+              color: activeTab === t.id ? "#E94560" : theme.textFainter, cursor: "pointer", transition: "all 0.2s",
               fontSize: isMobile ? "8px" : "11px", fontWeight: 700, letterSpacing: isMobile ? "0.5px" : "1px", textTransform: "uppercase",
               fontFamily: "'Space Mono', monospace", display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? "3px" : "6px",
             }}>
@@ -639,14 +642,14 @@ export default function DeltaVWorkstreams() {
       {/* WORKSTREAMS */}
       {activeTab === "workstreams" && (
         <div>
-          <div style={{ display: "flex", gap: 0, borderBottom: "1px solid rgba(255,255,255,0.06)", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${theme.border}`, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
             {WORKSTREAMS.map((w) => (
               <button key={w.id} onClick={() => { setActiveStream(activeStream === w.id ? null : w.id); setActivePhase(null); }}
                 style={{
                   flex: isMobile ? "0 0 auto" : "1 1 0", minWidth: isMobile ? "64px" : "90px", padding: isMobile ? "10px 8px" : "12px 6px",
                   background: activeStream === w.id ? `${w.color}18` : "transparent",
                   border: "none", borderBottom: activeStream === w.id ? `2px solid ${w.color}` : "2px solid transparent",
-                  color: activeStream === w.id ? w.color : "#555", cursor: "pointer", transition: "all 0.2s",
+                  color: activeStream === w.id ? w.color : theme.textFainter, cursor: "pointer", transition: "all 0.2s",
                   display: "flex", flexDirection: "column", alignItems: "center", gap: "2px",
                 }}>
                 <span style={{ fontSize: isMobile ? "14px" : "16px" }}>{w.icon}</span>
@@ -657,26 +660,26 @@ export default function DeltaVWorkstreams() {
 
           {!selected ? (
             <div style={{ padding: isMobile ? "16px 12px" : "24px 28px" }}>
-              <p style={{ color: "#777", fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "16px" : "24px", lineHeight: 1.6, maxWidth: "560px" }}>
+              <p style={{ color: theme.textDimAlt, fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "16px" : "24px", lineHeight: 1.6, maxWidth: "560px" }}>
                 Six parallel workstreams. Tap any one to see phase-by-phase breakdown with tasks and deliverables.
               </p>
               <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
                 <div style={{ display: "grid", gridTemplateColumns: `${isMobile ? "100px" : "140px"} repeat(10, ${isMobile ? "44px" : "1fr"})`, gap: 0, marginBottom: "2px", minWidth: isMobile ? "540px" : "auto" }}>
                   <div />
                   {QUARTERS.map((q) => (
-                    <div key={q.label} style={{ textAlign: "center", fontSize: "9px", fontFamily: "'Space Mono', monospace", color: "#444", letterSpacing: "1px", padding: "5px 0" }}>{q.label}</div>
+                    <div key={q.label} style={{ textAlign: "center", fontSize: "9px", fontFamily: "'Space Mono', monospace", color: theme.textDimmer, letterSpacing: "1px", padding: "5px 0" }}>{q.label}</div>
                   ))}
                 </div>
                 {WORKSTREAMS.map((w) => (
                   <div key={w.id} onClick={() => { setActiveStream(w.id); setActivePhase(null); }}
                     style={{ display: "grid", gridTemplateColumns: `${isMobile ? "100px" : "140px"} repeat(10, ${isMobile ? "44px" : "1fr"})`, gap: 0, marginBottom: "2px", cursor: "pointer", borderRadius: "3px", minWidth: isMobile ? "540px" : "auto" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = theme.cardBgHover)}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 4px" }}>
                       <span style={{ fontSize: "13px" }}>{w.icon}</span>
                       <div>
                         <div style={{ fontSize: "10px", fontWeight: 700, color: w.color }}>{w.label}</div>
-                        <div style={{ fontSize: "8px", color: "#444", fontFamily: "'Space Mono', monospace" }}>{w.tagline}</div>
+                        <div style={{ fontSize: "8px", color: theme.textDimmer, fontFamily: "'Space Mono', monospace" }}>{w.tagline}</div>
                       </div>
                     </div>
                     {QUARTERS.map((q) => {
@@ -690,7 +693,7 @@ export default function DeltaVWorkstreams() {
                             <div style={{ width: "100%", height: "22px", background: `${w.color}30`, borderRadius: `${isS ? "11px" : 0} ${isE ? "11px" : 0} ${isE ? "11px" : 0} ${isS ? "11px" : 0}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                               {isS && <span style={{ fontSize: "7px", color: w.color, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", padding: "0 3px" }}>{phase.name}</span>}
                             </div>
-                          ) : <div style={{ width: "100%", height: "22px", borderBottom: "1px solid rgba(255,255,255,0.03)" }} />}
+                          ) : <div style={{ width: "100%", height: "22px", borderBottom: `1px solid ${theme.borderSubtle}` }} />}
                         </div>
                       );
                     })}
@@ -704,16 +707,16 @@ export default function DeltaVWorkstreams() {
                 <span style={{ fontSize: isMobile ? "18px" : "22px" }}>{selected.icon}</span>
                 <div>
                   <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: selected.color }}>{selected.label}</h2>
-                  <p style={{ margin: 0, fontSize: "11px", color: "#555", fontFamily: "'Space Mono', monospace" }}>{selected.tagline}</p>
+                  <p style={{ margin: 0, fontSize: "11px", color: theme.textFainter, fontFamily: "'Space Mono', monospace" }}>{selected.tagline}</p>
                 </div>
               </div>
               <div style={{ display: "flex", gap: "5px", marginTop: "14px", marginBottom: "18px", flexWrap: "wrap" }}>
                 {selected.phases.map((phase, i) => (
                   <button key={i} onClick={() => setActivePhase(activePhase === i ? null : i)}
                     style={{
-                      padding: isMobile ? "6px 10px" : "7px 12px", background: activePhase === i ? selected.color : "rgba(255,255,255,0.04)",
-                      border: `1px solid ${activePhase === i ? selected.color : "rgba(255,255,255,0.08)"}`, borderRadius: "7px",
-                      color: activePhase === i ? "#fff" : "#777", cursor: "pointer", transition: "all 0.2s",
+                      padding: isMobile ? "6px 10px" : "7px 12px", background: activePhase === i ? selected.color : theme.cardBgActive,
+                      border: `1px solid ${activePhase === i ? selected.color : theme.borderStrong}`, borderRadius: "7px",
+                      color: activePhase === i ? "#fff" : theme.textDimAlt, cursor: "pointer", transition: "all 0.2s",
                       display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1px", flex: isMobile ? "1 1 calc(50% - 4px)" : "1 1 110px", minWidth: isMobile ? "0" : "110px",
                     }}>
                     <span style={{ fontSize: "11px", fontWeight: 700 }}>{phase.name}</span>
@@ -722,26 +725,26 @@ export default function DeltaVWorkstreams() {
                 ))}
               </div>
               {selectedPhase ? (
-                <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "9px", padding: "20px" }}>
+                <div style={{ background: theme.cardBg, border: `1px solid ${theme.border}`, borderRadius: "9px", padding: "20px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-                    <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#fff" }}>{selectedPhase.name}</h3>
+                    <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: theme.textStrong }}>{selectedPhase.name}</h3>
                     <span style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: selected.color, background: `${selected.color}15`, padding: "3px 8px", borderRadius: "16px" }}>{selectedPhase.timeline} 2026</span>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "16px" }}>
                     {selectedPhase.tasks.map((task, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "9px", padding: "7px 10px", background: "rgba(255,255,255,0.02)", borderRadius: "5px", borderLeft: `2px solid ${selected.color}40` }}>
+                      <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "9px", padding: "7px 10px", background: theme.cardBg, borderRadius: "5px", borderLeft: `2px solid ${selected.color}40` }}>
                         <span style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: selected.color, minWidth: "16px", opacity: 0.6 }}>{String(i + 1).padStart(2, "0")}</span>
-                        <span style={{ fontSize: "11px", color: "#ccc", lineHeight: 1.5 }}>{task}</span>
+                        <span style={{ fontSize: "11px", color: theme.textSecondary, lineHeight: 1.5 }}>{task}</span>
                       </div>
                     ))}
                   </div>
                   <div style={{ padding: "10px 12px", background: `${selected.color}10`, borderRadius: "6px", display: "flex", alignItems: "center", gap: "8px" }}>
                     <span style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: selected.color, fontWeight: 700, letterSpacing: "1px" }}>OUTPUT →</span>
-                    <span style={{ fontSize: "11px", color: "#fff", fontWeight: 500 }}>{selectedPhase.output}</span>
+                    <span style={{ fontSize: "11px", color: theme.textStrong, fontWeight: 500 }}>{selectedPhase.output}</span>
                   </div>
                 </div>
               ) : (
-                <div style={{ color: "#333", fontSize: "11px", fontFamily: "'Space Mono', monospace", padding: "28px 0", textAlign: "center" }}>↑ Select a phase</div>
+                <div style={{ color: theme.textGhost, fontSize: "11px", fontFamily: "'Space Mono', monospace", padding: "28px 0", textAlign: "center" }}>↑ Select a phase</div>
               )}
             </div>
           )}
@@ -751,7 +754,7 @@ export default function DeltaVWorkstreams() {
       {/* SCENARIOS */}
       {activeTab === "scenarios" && (
         <div style={{ padding: isMobile ? "16px 12px" : "24px 28px" }}>
-          <p style={{ color: "#777", fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "14px" : "20px", lineHeight: 1.6, maxWidth: "580px" }}>
+          <p style={{ color: theme.textDimAlt, fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "14px" : "20px", lineHeight: 1.6, maxWidth: "580px" }}>
             Four scenarios for 2026. Each maps conditions, LP outcome, key risk, and estimated probability. Plan for base case. Prepare for slow start.
           </p>
           <div style={{ display: "flex", gap: "6px", marginBottom: isMobile ? "14px" : "20px", flexWrap: "wrap" }}>
@@ -759,16 +762,16 @@ export default function DeltaVWorkstreams() {
               <button key={s.id} onClick={() => setActiveScenario(activeScenario === s.id ? null : s.id)}
                 style={{
                   flex: isMobile ? "1 1 calc(50% - 4px)" : "1 1 130px", minWidth: isMobile ? "0" : "130px", padding: isMobile ? "8px 10px" : "10px 14px",
-                  background: activeScenario === s.id ? `${s.color}20` : "rgba(255,255,255,0.03)",
-                  border: `1px solid ${activeScenario === s.id ? s.color : "rgba(255,255,255,0.08)"}`,
+                  background: activeScenario === s.id ? `${s.color}20` : theme.cardBgHover,
+                  border: `1px solid ${activeScenario === s.id ? s.color : theme.borderStrong}`,
                   borderRadius: "9px", cursor: "pointer", transition: "all 0.2s",
                   display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "3px",
                 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <span style={{ fontSize: "16px" }}>{s.icon}</span>
-                  <span style={{ fontSize: "12px", fontWeight: 700, color: activeScenario === s.id ? s.color : "#888" }}>{s.label}</span>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: activeScenario === s.id ? s.color : theme.textDim }}>{s.label}</span>
                 </div>
-                <span style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: activeScenario === s.id ? s.color : "#444" }}>{s.probability}</span>
+                <span style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: activeScenario === s.id ? s.color : theme.textDimmer }}>{s.probability}</span>
               </button>
             ))}
           </div>
@@ -776,10 +779,10 @@ export default function DeltaVWorkstreams() {
           {activeScenario && (() => {
             const s = SCENARIOS.find((x) => x.id === activeScenario);
             return (
-              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${s.color}30`, borderRadius: "10px", overflow: "hidden" }}>
+              <div style={{ background: theme.cardBg, border: `1px solid ${s.color}30`, borderRadius: "10px", overflow: "hidden" }}>
                 <div style={{ padding: "16px 20px", borderBottom: `1px solid ${s.color}20` }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#fff" }}>{s.title}</h3>
+                    <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: theme.textStrong }}>{s.title}</h3>
                     <span style={{ fontSize: "10px", fontFamily: "'Space Mono', monospace", color: s.color, background: `${s.color}15`, padding: "3px 9px", borderRadius: "16px" }}>{s.probability}</span>
                   </div>
                 </div>
@@ -788,9 +791,9 @@ export default function DeltaVWorkstreams() {
                     <div style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: s.color, fontWeight: 700, letterSpacing: "1px", marginBottom: "8px" }}>WHAT HAPPENS</div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                       {s.conditions.map((c, i) => (
-                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "5px 9px", background: "rgba(255,255,255,0.02)", borderRadius: "5px" }}>
+                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "5px 9px", background: theme.cardBg, borderRadius: "5px" }}>
                           <span style={{ fontSize: "9px", color: s.color, fontFamily: "'Space Mono', monospace", minWidth: "14px" }}>{String(i + 1).padStart(2, "0")}</span>
-                          <span style={{ fontSize: "11px", color: "#ccc", lineHeight: 1.5 }}>{c}</span>
+                          <span style={{ fontSize: "11px", color: theme.textSecondary, lineHeight: 1.5 }}>{c}</span>
                         </div>
                       ))}
                     </div>
@@ -798,11 +801,11 @@ export default function DeltaVWorkstreams() {
                   <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "10px" }}>
                     <div style={{ padding: isMobile ? "10px 12px" : "12px 14px", background: `${s.color}08`, borderRadius: "7px", borderLeft: `3px solid ${s.color}` }}>
                       <div style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: s.color, fontWeight: 700, letterSpacing: "1px", marginBottom: "6px" }}>LP OUTCOME</div>
-                      <p style={{ margin: 0, fontSize: "11px", color: "#aaa", lineHeight: 1.6 }}>{s.lp_outcome}</p>
+                      <p style={{ margin: 0, fontSize: "11px", color: theme.textMuted, lineHeight: 1.6 }}>{s.lp_outcome}</p>
                     </div>
                     <div style={{ padding: "12px 14px", background: "rgba(239,68,68,0.06)", borderRadius: "7px", borderLeft: "3px solid #ef4444" }}>
                       <div style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: "#ef4444", fontWeight: 700, letterSpacing: "1px", marginBottom: "6px" }}>KEY RISK</div>
-                      <p style={{ margin: 0, fontSize: "11px", color: "#aaa", lineHeight: 1.6 }}>{s.risk}</p>
+                      <p style={{ margin: 0, fontSize: "11px", color: theme.textMuted, lineHeight: 1.6 }}>{s.risk}</p>
                     </div>
                   </div>
                 </div>
@@ -810,14 +813,14 @@ export default function DeltaVWorkstreams() {
             );
           })()}
 
-          {!activeScenario && <div style={{ color: "#333", fontSize: "11px", fontFamily: "'Space Mono', monospace", padding: "36px 0", textAlign: "center" }}>↑ Select a scenario to explore</div>}
+          {!activeScenario && <div style={{ color: theme.textGhost, fontSize: "11px", fontFamily: "'Space Mono', monospace", padding: "36px 0", textAlign: "center" }}>↑ Select a scenario to explore</div>}
         </div>
       )}
 
       {/* LEGAL */}
       {activeTab === "legal" && (
         <div style={{ padding: isMobile ? "16px 12px" : "24px 28px" }}>
-          <p style={{ color: "#777", fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "14px" : "20px", lineHeight: 1.6, maxWidth: "600px" }}>
+          <p style={{ color: theme.textDimAlt, fontSize: isMobile ? "11px" : "12px", marginBottom: isMobile ? "14px" : "20px", lineHeight: 1.6, maxWidth: "600px" }}>
             Fund vehicle options under CBB regulations, LP commitments, required documents, and tax structure. Informed by Bahrain's regulatory framework — not legal advice.
           </p>
           <div style={{ display: "flex", gap: "5px", marginBottom: isMobile ? "14px" : "20px", flexWrap: "wrap" }}>
@@ -825,13 +828,13 @@ export default function DeltaVWorkstreams() {
               <button key={sec.id} onClick={() => { setActiveLegalSection(activeLegalSection === sec.id ? null : sec.id); setActiveLegalItem(null); }}
                 style={{
                   flex: isMobile ? "1 1 calc(50% - 4px)" : "1 1 140px", minWidth: isMobile ? "0" : "140px", padding: isMobile ? "8px 10px" : "10px 14px",
-                  background: activeLegalSection === sec.id ? "rgba(233,69,96,0.12)" : "rgba(255,255,255,0.03)",
-                  border: `1px solid ${activeLegalSection === sec.id ? "#E94560" : "rgba(255,255,255,0.08)"}`,
+                  background: activeLegalSection === sec.id ? "rgba(233,69,96,0.12)" : theme.cardBgHover,
+                  border: `1px solid ${activeLegalSection === sec.id ? "#E94560" : theme.borderStrong}`,
                   borderRadius: "9px", cursor: "pointer", transition: "all 0.2s",
                   display: "flex", alignItems: "center", gap: "6px",
                 }}>
                 <span style={{ fontSize: "16px" }}>{sec.icon}</span>
-                <span style={{ fontSize: "11px", fontWeight: 700, color: activeLegalSection === sec.id ? "#E94560" : "#777" }}>{sec.title}</span>
+                <span style={{ fontSize: "11px", fontWeight: 700, color: activeLegalSection === sec.id ? "#E94560" : theme.textDimAlt }}>{sec.title}</span>
               </button>
             ))}
           </div>
@@ -843,23 +846,23 @@ export default function DeltaVWorkstreams() {
                 {sec.items.map((item, idx) => {
                   const isOpen = activeLegalItem === idx;
                   return (
-                    <div key={idx} style={{ marginBottom: "6px", background: "rgba(255,255,255,0.02)", border: `1px solid ${isOpen ? "rgba(233,69,96,0.3)" : "rgba(255,255,255,0.06)"}`, borderRadius: "9px", overflow: "hidden", transition: "border 0.2s" }}>
+                    <div key={idx} style={{ marginBottom: "6px", background: theme.cardBg, border: `1px solid ${isOpen ? "rgba(233,69,96,0.3)" : theme.border}`, borderRadius: "9px", overflow: "hidden", transition: "border 0.2s" }}>
                       <button onClick={() => setActiveLegalItem(isOpen ? null : idx)}
                         style={{ width: "100%", padding: isMobile ? "12px 14px" : "14px 18px", background: "transparent", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "left" }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <h4 style={{ margin: 0, fontSize: isMobile ? "12px" : "13px", fontWeight: 700, color: isOpen ? "#E94560" : "#ddd" }}>{item.heading}</h4>
-                          <p style={{ margin: "3px 0 0", fontSize: "10px", color: "#555", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: isMobile ? "normal" : "nowrap" }}>{item.desc}</p>
+                          <h4 style={{ margin: 0, fontSize: isMobile ? "12px" : "13px", fontWeight: 700, color: isOpen ? "#E94560" : theme.textHeading }}>{item.heading}</h4>
+                          <p style={{ margin: "3px 0 0", fontSize: "10px", color: theme.textFainter, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: isMobile ? "normal" : "nowrap" }}>{item.desc}</p>
                         </div>
-                        <span style={{ fontSize: "16px", color: isOpen ? "#E94560" : "#333", transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft: "12px", flexShrink: 0 }}>▾</span>
+                        <span style={{ fontSize: "16px", color: isOpen ? "#E94560" : theme.textGhost, transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft: "12px", flexShrink: 0 }}>▾</span>
                       </button>
                       {isOpen && (
                         <div style={{ padding: "0 18px 16px" }}>
-                          <p style={{ fontSize: "11px", color: "#999", lineHeight: 1.7, marginBottom: "14px", marginTop: 0 }}>{item.desc}</p>
+                          <p style={{ fontSize: "11px", color: theme.textMutedAlt, lineHeight: 1.7, marginBottom: "14px", marginTop: 0 }}>{item.desc}</p>
                           <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                             {item.details.map((d, i) => (
-                              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "9px", padding: "7px 10px", background: "rgba(255,255,255,0.02)", borderRadius: "5px", borderLeft: "2px solid rgba(233,69,96,0.3)" }}>
+                              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "9px", padding: "7px 10px", background: theme.cardBg, borderRadius: "5px", borderLeft: "2px solid rgba(233,69,96,0.3)" }}>
                                 <span style={{ fontSize: "9px", fontFamily: "'Space Mono', monospace", color: "#E94560", minWidth: "14px", opacity: 0.6 }}>{String(i + 1).padStart(2, "0")}</span>
-                                <span style={{ fontSize: "11px", color: "#ccc", lineHeight: 1.5 }}>{d}</span>
+                                <span style={{ fontSize: "11px", color: theme.textSecondary, lineHeight: 1.5 }}>{d}</span>
                               </div>
                             ))}
                           </div>
@@ -872,9 +875,9 @@ export default function DeltaVWorkstreams() {
             );
           })()}
 
-          {!activeLegalSection && <div style={{ color: "#333", fontSize: "11px", fontFamily: "'Space Mono', monospace", padding: "36px 0", textAlign: "center" }}>↑ Select a section to explore</div>}
+          {!activeLegalSection && <div style={{ color: theme.textGhost, fontSize: "11px", fontFamily: "'Space Mono', monospace", padding: "36px 0", textAlign: "center" }}>↑ Select a section to explore</div>}
 
-          <div style={{ marginTop: "20px", padding: "12px 16px", background: "rgba(239,68,68,0.06)", borderLeft: "3px solid #ef4444", borderRadius: "0 7px 7px 0", fontSize: "10px", color: "#777", lineHeight: 1.6 }}>
+          <div style={{ marginTop: "20px", padding: "12px 16px", background: "rgba(239,68,68,0.06)", borderLeft: "3px solid #ef4444", borderRadius: "0 7px 7px 0", fontSize: "10px", color: theme.textDimAlt, lineHeight: 1.6 }}>
             <strong style={{ color: "#ef4444" }}>Not legal advice.</strong> Fund formation requires a qualified Bahrain lawyer familiar with CBB regulations. Terms should be tailored to your situation and negotiated with LPs.
           </div>
         </div>
@@ -882,6 +885,7 @@ export default function DeltaVWorkstreams() {
 
       {/* LEGAL HUB — DOCS, TREE, PIVOTS */}
       {activeTab === "legalhub" && <LegalHub />}
+
     </div>
   );
 }

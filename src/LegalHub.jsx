@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import useIsMobile from "./useIsMobile.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─── DOCUMENT TEMPLATES ────────────────────────────────────────────────────
 const DOC_TEMPLATES = [
@@ -768,6 +769,7 @@ function FlowDiagram() {
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const isMobile = useIsMobile();
+  const { theme } = useTheme();
   const [scale, setScale] = useState(isMobile ? 0.45 : 0.85);
 
   const W = 900;
@@ -952,7 +954,7 @@ function FlowDiagram() {
               alignItems: "center",
               gap: "5px",
               fontSize: "9px",
-              color: "#666",
+              color: theme.textFaint,
             }}
           >
             <div
@@ -974,8 +976,8 @@ function FlowDiagram() {
         style={{
           overflow: "hidden",
           borderRadius: "10px",
-          border: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(0,0,0,0.3)",
+          border: `1px solid ${theme.border}`,
+          background: theme.overlay,
           cursor: dragging ? "grabbing" : hoveredNode ? "pointer" : "grab",
           position: "relative",
           height: isMobile ? "380px" : "520px",
@@ -1095,7 +1097,7 @@ function FlowDiagram() {
             border: `1px solid ${NODE_STYLES[hovNode.type].border}30`,
             borderRadius: "8px",
             fontSize: "11px",
-            color: "#bbb",
+            color: theme.textTertiary,
             lineHeight: 1.6,
           }}
         >
@@ -1126,6 +1128,7 @@ export default function LegalHub() {
   const [activePivotScenario, setActivePivotScenario] = useState(null);
   const [activePivotOption, setActivePivotOption] = useState(null);
   const isMobile = useIsMobile();
+  const { theme } = useTheme();
 
   const subTabs = [
     { id: "docs", label: "Document Vault", icon: "📄" },
@@ -1155,8 +1158,8 @@ export default function LegalHub() {
         style={{
           display: "flex",
           gap: "0",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(255,255,255,0.015)",
+          borderBottom: `1px solid ${theme.border}`,
+          background: theme.cardBgSubtle,
         }}
       >
         {subTabs.map((t) => (
@@ -1179,7 +1182,7 @@ export default function LegalHub() {
                 subTab === t.id
                   ? "2px solid #E94560"
                   : "2px solid transparent",
-              color: subTab === t.id ? "#E94560" : "#444",
+              color: subTab === t.id ? "#E94560" : theme.textDimmer,
               cursor: "pointer",
               transition: "all 0.2s",
               fontSize: isMobile ? "8px" : "10px",
@@ -1204,7 +1207,7 @@ export default function LegalHub() {
         <div style={{ padding: isMobile ? "14px 12px" : "20px 24px" }}>
           <p
             style={{
-              color: "#666",
+              color: theme.textFaint,
               fontSize: "11px",
               marginBottom: "16px",
               lineHeight: 1.6,
@@ -1238,10 +1241,10 @@ export default function LegalHub() {
                   background:
                     activeCategory === c.id
                       ? "rgba(233,69,96,0.15)"
-                      : "rgba(255,255,255,0.03)",
-                  border: `1px solid ${activeCategory === c.id ? "#E94560" : "rgba(255,255,255,0.06)"}`,
+                      : theme.cardBgHover,
+                  border: `1px solid ${activeCategory === c.id ? "#E94560" : theme.border}`,
                   borderRadius: "20px",
-                  color: activeCategory === c.id ? "#E94560" : "#555",
+                  color: activeCategory === c.id ? "#E94560" : theme.textFainter,
                   cursor: "pointer",
                   fontSize: "10px",
                   fontWeight: 600,
@@ -1268,8 +1271,8 @@ export default function LegalHub() {
                   onClick={() => setActiveDoc(doc.id)}
                   style={{
                     padding: "14px 16px",
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(255,255,255,0.06)",
+                    background: theme.cardBg,
+                    border: `1px solid ${theme.border}`,
                     borderRadius: "10px",
                     cursor: "pointer",
                     textAlign: "left",
@@ -1283,10 +1286,8 @@ export default function LegalHub() {
                     e.currentTarget.style.background = "rgba(233,69,96,0.05)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor =
-                      "rgba(255,255,255,0.06)";
-                    e.currentTarget.style.background =
-                      "rgba(255,255,255,0.02)";
+                    e.currentTarget.style.borderColor = theme.border;
+                    e.currentTarget.style.background = theme.cardBg;
                   }}
                 >
                   <div
@@ -1326,7 +1327,7 @@ export default function LegalHub() {
                     style={{
                       fontSize: "12px",
                       fontWeight: 700,
-                      color: "#ddd",
+                      color: theme.textHeading,
                     }}
                   >
                     {doc.title}
@@ -1334,7 +1335,7 @@ export default function LegalHub() {
                   <div
                     style={{
                       fontSize: "9px",
-                      color: "#555",
+                      color: theme.textFainter,
                       fontFamily: "'Space Mono', monospace",
                     }}
                   >
@@ -1381,7 +1382,7 @@ export default function LegalHub() {
                       margin: 0,
                       fontSize: "16px",
                       fontWeight: 700,
-                      color: "#fff",
+                      color: theme.textStrong,
                     }}
                   >
                     {selectedDoc.title}
@@ -1416,7 +1417,7 @@ export default function LegalHub() {
                     <span
                       style={{
                         fontSize: "9px",
-                        color: "#555",
+                        color: theme.textFainter,
                         fontFamily: "'Space Mono', monospace",
                       }}
                     >
@@ -1429,7 +1430,7 @@ export default function LegalHub() {
               <p
                 style={{
                   fontSize: "11px",
-                  color: "#888",
+                  color: theme.textDim,
                   lineHeight: 1.7,
                   marginBottom: "18px",
                   maxWidth: "600px",
@@ -1446,8 +1447,8 @@ export default function LegalHub() {
                     key={idx}
                     style={{
                       marginBottom: "6px",
-                      background: "rgba(255,255,255,0.02)",
-                      border: `1px solid ${isOpen ? "rgba(233,69,96,0.3)" : "rgba(255,255,255,0.06)"}`,
+                      background: theme.cardBg,
+                      border: `1px solid ${isOpen ? "rgba(233,69,96,0.3)" : theme.border}`,
                       borderRadius: "9px",
                       overflow: "hidden",
                       transition: "border 0.2s",
@@ -1491,7 +1492,7 @@ export default function LegalHub() {
                           style={{
                             fontSize: "12px",
                             fontWeight: 700,
-                            color: isOpen ? "#E94560" : "#ccc",
+                            color: isOpen ? "#E94560" : theme.textSecondary,
                           }}
                         >
                           {sec.name}
@@ -1500,7 +1501,7 @@ export default function LegalHub() {
                       <span
                         style={{
                           fontSize: "14px",
-                          color: isOpen ? "#E94560" : "#333",
+                          color: isOpen ? "#E94560" : theme.textGhost,
                           transition: "transform 0.2s",
                           transform: isOpen
                             ? "rotate(180deg)"
@@ -1514,13 +1515,13 @@ export default function LegalHub() {
                       <div style={{ padding: "0 16px 16px" }}>
                         <div
                           style={{
-                            background: "rgba(0,0,0,0.3)",
+                            background: theme.overlay,
                             border: "1px solid rgba(233,69,96,0.15)",
                             borderRadius: "8px",
                             padding: "14px 16px",
                             fontFamily: "'Space Mono', monospace",
                             fontSize: "10px",
-                            color: "#999",
+                            color: theme.textMutedAlt,
                             lineHeight: 1.8,
                             whiteSpace: "pre-wrap",
                             overflowX: "auto",
@@ -1556,7 +1557,7 @@ export default function LegalHub() {
                   borderLeft: "3px solid #ef4444",
                   borderRadius: "0 7px 7px 0",
                   fontSize: "10px",
-                  color: "#777",
+                  color: theme.textDimAlt,
                   lineHeight: 1.6,
                 }}
               >
@@ -1574,7 +1575,7 @@ export default function LegalHub() {
         <div style={{ padding: isMobile ? "14px 12px" : "20px 24px" }}>
           <p
             style={{
-              color: "#666",
+              color: theme.textFaint,
               fontSize: "11px",
               marginBottom: "16px",
               lineHeight: 1.6,
@@ -1595,7 +1596,7 @@ export default function LegalHub() {
         <div style={{ padding: isMobile ? "14px 12px" : "20px 24px" }}>
           <p
             style={{
-              color: "#666",
+              color: theme.textFaint,
               fontSize: "11px",
               marginBottom: "16px",
               lineHeight: 1.6,
@@ -1630,8 +1631,8 @@ export default function LegalHub() {
                   background:
                     activePivotScenario === s.id
                       ? `${s.color}12`
-                      : "rgba(255,255,255,0.02)",
-                  border: `1px solid ${activePivotScenario === s.id ? `${s.color}40` : "rgba(255,255,255,0.06)"}`,
+                      : theme.cardBg,
+                  border: `1px solid ${activePivotScenario === s.id ? `${s.color}40` : theme.border}`,
                   borderRadius: "10px",
                   cursor: "pointer",
                   textAlign: "left",
@@ -1648,7 +1649,7 @@ export default function LegalHub() {
                       fontSize: "12px",
                       fontWeight: 700,
                       color:
-                        activePivotScenario === s.id ? s.color : "#ccc",
+                        activePivotScenario === s.id ? s.color : theme.textSecondary,
                     }}
                   >
                     {s.trigger}
@@ -1656,7 +1657,7 @@ export default function LegalHub() {
                   <div
                     style={{
                       fontSize: "9px",
-                      color: "#555",
+                      color: theme.textFainter,
                       fontFamily: "'Space Mono', monospace",
                       marginTop: "2px",
                     }}
@@ -1700,7 +1701,7 @@ export default function LegalHub() {
               return (
                 <div
                   style={{
-                    background: "rgba(255,255,255,0.02)",
+                    background: theme.cardBg,
                     border: `1px solid ${s.color}25`,
                     borderRadius: "10px",
                     overflow: "hidden",
@@ -1729,7 +1730,7 @@ export default function LegalHub() {
                       style={{
                         margin: 0,
                         fontSize: "11px",
-                        color: "#aaa",
+                        color: theme.textMuted,
                         lineHeight: 1.6,
                       }}
                     >
@@ -1774,8 +1775,8 @@ export default function LegalHub() {
                             background:
                               activePivotOption === i
                                 ? `${s.color}15`
-                                : "rgba(255,255,255,0.02)",
-                            border: `1px solid ${activePivotOption === i ? s.color : "rgba(255,255,255,0.06)"}`,
+                                : theme.cardBg,
+                            border: `1px solid ${activePivotOption === i ? s.color : theme.border}`,
                             borderRadius: "8px",
                             cursor: "pointer",
                             textAlign: "left",
@@ -1787,7 +1788,7 @@ export default function LegalHub() {
                               fontSize: "11px",
                               fontWeight: 700,
                               color:
-                                activePivotOption === i ? s.color : "#bbb",
+                                activePivotOption === i ? s.color : theme.textTertiary,
                               marginBottom: "6px",
                             }}
                           >
@@ -1819,7 +1820,7 @@ export default function LegalHub() {
                         return (
                           <div
                             style={{
-                              background: "rgba(0,0,0,0.2)",
+                              background: theme.overlayLight,
                               border: `1px solid ${s.color}20`,
                               borderRadius: "9px",
                               overflow: "hidden",
@@ -1836,7 +1837,7 @@ export default function LegalHub() {
                                   margin: 0,
                                   fontSize: "13px",
                                   fontWeight: 700,
-                                  color: "#fff",
+                                  color: theme.textStrong,
                                   marginBottom: "6px",
                                 }}
                               >
@@ -1846,7 +1847,7 @@ export default function LegalHub() {
                                 style={{
                                   margin: 0,
                                   fontSize: "11px",
-                                  color: "#888",
+                                  color: theme.textDim,
                                   lineHeight: 1.6,
                                 }}
                               >
@@ -1959,8 +1960,7 @@ export default function LegalHub() {
                                       alignItems: "flex-start",
                                       gap: "9px",
                                       padding: "6px 10px",
-                                      background:
-                                        "rgba(255,255,255,0.02)",
+                                      background: theme.cardBg,
                                       borderRadius: "5px",
                                       borderLeft: `2px solid ${s.color}40`,
                                     }}
@@ -1980,7 +1980,7 @@ export default function LegalHub() {
                                     <span
                                       style={{
                                         fontSize: "11px",
-                                        color: "#bbb",
+                                        color: theme.textTertiary,
                                         lineHeight: 1.5,
                                       }}
                                     >
@@ -2017,7 +2017,7 @@ export default function LegalHub() {
                                   style={{
                                     margin: 0,
                                     fontSize: "11px",
-                                    color: "#ccc",
+                                    color: theme.textSecondary,
                                     lineHeight: 1.6,
                                     fontWeight: 500,
                                   }}
